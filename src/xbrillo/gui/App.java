@@ -1,5 +1,11 @@
 package xbrillo.gui;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -10,6 +16,7 @@ public class App extends javax.swing.JFrame {
 
     private final int MAXIMO = 100000;
     private final int DIVISOR = 1000;
+    private Properties config;
     
     private final PasswordInputPanel passwordInputPanel;
 
@@ -90,13 +97,23 @@ public class App extends javax.swing.JFrame {
 
     private void init() {
         brilloSlider.setMaximum(MAXIMO);
+        config = new Properties();
+        
+        try {
+            config.load(new FileInputStream("config.properties"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         while (true) {
             try {
-                char[] pass = passwordInputPanel.showPasswordDialog("Ingrese la contraseña de root: ");
+                //char[] pass = passwordInputPanel.showPasswordDialog("Ingrese la contraseña de root: ");
                 
-                if(pass != null){
-                    Terminal.PASSWORD = new String(pass);
+               // if(pass != null){
+                    Terminal.ROOT_PASSWORD = config.getProperty("rootPassword");
+                    
                     String commandOutput = Terminal.execute("brillo -G").trim();
                     Float brilloActual = Float.parseFloat(commandOutput);
                     
@@ -106,15 +123,18 @@ public class App extends javax.swing.JFrame {
                     lblPorcentaje.setText((brilloSlider.getValue() / DIVISOR)+ "%");
 
                     break;
-                }else{
+               // }else{
                     // Cuando el usuario apreta "Cancelar" en el ingreso
                     // de la contraseña
-                    System.exit(0);
-                }
+                    //System.exit(0);
+                //}
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
             }
         }
+        
+        Point p = MouseInfo.getPointerInfo().getLocation();
+        this.setLocation(p.x,p.y);
     }
 
 }

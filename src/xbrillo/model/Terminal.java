@@ -6,11 +6,11 @@ import java.util.Arrays;
 
 public class Terminal {
 
-    public static String PASSWORD;
+    public static String ROOT_PASSWORD;
 
     // brillo -S 45
     public static String execute(String command) throws Exception {
-        if (PASSWORD != null) {
+        if (ROOT_PASSWORD != null) {
             System.out.println("Command to execute: "+command);
             String result = "";
             
@@ -34,7 +34,7 @@ public class Terminal {
                 if (data.contains("[sudo] password")) {
                     // Here you can request the password to user using JOPtionPane or System.console().readPassword();
                     // I'm just hard coding the password, but in real it's not good.
-                    char password[] = PASSWORD.toCharArray();
+                    char password[] = ROOT_PASSWORD.toCharArray();
                     output.write(password);
                     output.write('\n');
                     output.flush();
